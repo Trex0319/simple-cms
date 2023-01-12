@@ -18,18 +18,39 @@
 
     // step 3: do error check
 
+    // Do a check to find out should we do password or not
+    $is_password_changed = ( 
+      ( isset( $_POST['password'] ) && !empty( $_POST['password'] ) ) || 
+      ( isset( $_POST['confirm_password'] ) && !empty( $_POST['confirm_password'] ) ) 
+      ? true : false
+    );
+
       // if both password & confirm_password fields are empty, skip error checking for both fields.
       $rules = [
         'name' => 'required',
         'email' => 'email_check',
-        'role' => 'required'
+        'role' => 'required',
+        'csrf_token' => 'edit_user_form_csrf_token'
       ];
+
+      // if password is updated
+      if ( $is_password_changed ) {
+        $rules['password'] = 'password_check'; // make sure the length >= 8
+        $rules['confirm_password'] = 'is_password_match'; // make sure both fields are match
+      }
 
       $error = FormValidation::validate(
         $_POST,
         $rules
       );
 
+      // if email changed, make sure if cannot belongs to another user
+      // we check for email changes
+      if ( $user['email'] !== $_POST['email'] ) {
+        // do database check to make sure new email wasn't already in use
+        $error = FormValidation::checkEmailUniqueness( $_POST['email'] );
+      }
+ 
       // make sure there is no error
       if ( !$error ) {
         // step 4: update user
@@ -37,11 +58,16 @@
           $user['id'],
           $_POST['name'],
           $_POST['email'],
-          $_POST['role']
+          $_POST['role'],
+          ( $is_password_changed ? $_POST['password'] : null ) // password update if available
         );
 
-
         // step 5: remove the CSRF token
+        CSRF::removeToken( 'edit_user_form' );
+
+        // step 6: redirect to manager users page
+        header("Location: /manage-users");
+        exit;
 
 
       }
@@ -119,6 +145,11 @@
           <div class="d-grid">
             <button type="submit" class="btn btn-primary">Update</button>
           </div>
+          <input 
+          type="hidden"
+          name="csrf_token"
+          value="<?php echo CSRF::getToken( 'edit_user_form' ); ?>"
+          />
         </form>
       </div>
       <div class="text-center">

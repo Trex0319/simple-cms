@@ -83,6 +83,27 @@ class FormValidation
                         $error .= "Invalid CSRF Token<br />";
                     }
                     break;
+                // make sure edit form csrf token is match
+                case 'edit_user_form_csrf_token':
+                    // $data[$key] is $_POST['csrf_token'];
+                    if ( !CSRF::verifyToken( $data[$key], 'edit_user_form' ) ) {
+                        $error .= "Invalid CSRF Token<br />";
+                    }
+                    break;
+                // make sure add form csrf token is match
+                case 'add_user_form_csrf_token':
+                    // $data[$key] is $_POST['csrf_token'];
+                    if ( !CSRF::verifyToken( $data[$key], 'add_user_form' ) ) {
+                        $error .= "Invalid CSRF Token<br />";
+                    }
+                    break;
+                // make sure delete form csrf token is match
+                case 'delete_user_form_csrf_token':
+                    // $data[$key] is $_POST['csrf_token'];
+                    if ( !CSRF::verifyToken( $data[$key], 'delete_user_form' ) ) {
+                        $error .= "Invalid CSRF Token<br />";
+                    }
+                    break;
             }
         } // end - foreach
 
