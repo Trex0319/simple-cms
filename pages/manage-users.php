@@ -1,7 +1,12 @@
 <?php
 
-require "parts/header.php";
+  // make sure only admin can access
+  if ( !Authentication::whoCanAccess('admin') ) {
+    header('Location: /dashboard');
+    exit;
+  }
 
+require dirname(__DIR__) . '/parts/header.php';
 ?>
     <div class="container mx-auto my-5" style="max-width: 700px;">
       <div class="d-flex justify-content-between align-items-center mb-2">
@@ -24,15 +29,30 @@ require "parts/header.php";
             </tr>
           </thead>
           <tbody>
+            <?php foreach( User::getAllUsers() as $user ) : ?>
             <tr>
-              <th scope="row">3</th>
-              <td>Jack</td>
-              <td>jack@gmail.com</td>
-              <td><span class="badge bg-success">User</span></td>
+              <th scope="row"><?php echo $user['id']; ?></th>
+              <td><?php echo $user['name']; ?></td>
+              <td><?php echo $user['email']; ?></td>
+              <td>
+              <?php
+                    switch( $user['role'] ) {
+                      case 'admin':
+                        echo '<span class="badge bg-primary">' . $user['role'] .'</span>';
+                        break;
+                      case 'editor':
+                        echo '<span class="badge bg-info">' . $user['role'] .'</span>';
+                        break;
+                      case 'user':
+                        echo '<span class="badge bg-success">' . $user['role'] .'</span>';
+                        break;
+                    }
+                  ?>
+                </td>
               <td class="text-end">
                 <div class="buttons">
                   <a
-                    href="/manage-users-edit"
+                    href="/manage-users-edit?id=<?php echo $user['id']; ?>"
                     class="btn btn-success btn-sm me-2"
                     ><i class="bi bi-pencil"></i
                   ></a>
@@ -42,42 +62,7 @@ require "parts/header.php";
                 </div>
               </td>
             </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jane</td>
-              <td>jane@gmail.com</td>
-              <td><span class="badge bg-info">Editor</span></td>
-              <td class="text-end">
-                <div class="buttons">
-                  <a
-                    href="/manage-users-edit"
-                    class="btn btn-success btn-sm me-2"
-                    ><i class="bi bi-pencil"></i
-                  ></a>
-                  <a href="#" class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>John</td>
-              <td>john@gmail.com</td>
-              <td><span class="badge bg-primary">Admin</span></td>
-              <td class="text-end">
-                <div class="buttons">
-                  <a
-                    href="/manage-users-edit"
-                    class="btn btn-success btn-sm me-2"
-                    ><i class="bi bi-pencil"></i
-                  ></a>
-                  <a href="#" class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
-                </div>
-              </td>
-            </tr>
+            <?php endforeach; ?>
           </tbody>
         </table>
       </div>
@@ -89,4 +74,4 @@ require "parts/header.php";
     </div>
     <?php
 
-require "parts/footer.php";
+require dirname(__DIR__) . '/parts/footer.php';

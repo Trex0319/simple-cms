@@ -1,6 +1,12 @@
 <?php
 
-require "parts/header.php";
+  // make sure only admin can access
+  if ( !Authentication::whoCanAccess('admin') ) {
+    header('Location: /dashboard');
+    exit;
+  }
+
+  require dirname(__DIR__) . '/parts/header.php';
 
 ?>  
     <div class="container mx-auto my-5" style="max-width: 700px;">
@@ -61,4 +67,4 @@ require "parts/header.php";
     </div>
     <?php
 
-require "parts/footer.php";
+require dirname(__DIR__) . '/parts/footer.php';

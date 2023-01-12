@@ -1,9 +1,8 @@
 <?php
 
-require "parts/header.php";
+if ( Authentication::isLoggedIn() ) {
+    Authentication::logout();
+}
 
-?>
-
-<?php
-
-require "parts/footer.php";
+header('Location: /login');
+exit;

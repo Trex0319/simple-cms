@@ -1,7 +1,12 @@
 <?php
 
-require "parts/header.php";
+    // make sure the user has a valid role
+    if ( !Authentication::whoCanAccess('user') ) {
+      header('Location: /login');
+      exit;
+    }
 
+require dirname(__DIR__) . '/parts/header.php';
 ?>
 
     <div class="container mx-auto my-5" style="max-width: 800px;">
@@ -24,6 +29,8 @@ require "parts/header.php";
             </div>
           </div>
         </div>
+        <!-- manage users start -->
+        <?php if ( Authentication::whoCanAccess('admin') ) : ?>
         <div class="col">
           <div class="card mb-2">
             <div class="card-body">
@@ -41,6 +48,9 @@ require "parts/header.php";
             </div>
           </div>
         </div>
+        <?php endif; ?>
+        <!-- manage users end -->
+
       </div>
       <div class="mt-4 text-center">
         <a href="/" class="btn btn-link btn-sm"
@@ -51,4 +61,4 @@ require "parts/header.php";
 
     <?php
 
-require "parts/footer.php";
+require dirname(__DIR__) . '/parts/footer.php';

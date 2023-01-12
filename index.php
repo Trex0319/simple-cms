@@ -1,8 +1,15 @@
 <?php
 
-$path=$_SERVER['REQUEST_URI'];
+session_start();
 
-$path = trim ($path,'/');
+require "includes/class_db.php";
+require "includes/class-user.php";
+require "includes/user-authentication.php";
+require "includes/class-form-validation.php";
+require "includes/class-csrf.php";
+
+$path = trim ( $_SERVER['REQUEST_URI'],'/');
+
 $path = parse_url($path, PHP_URL_PATH);
 
 switch ($path){
